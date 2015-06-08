@@ -7,7 +7,7 @@ Software for population genetic inference from serially sampled genome sequencin
   1. Install [boost](http://www.boost.org/users/download/)
   2. Install [Eigen](eigen.tuxfamily.org/) 
   3. `git clone https://github.com/OSSCB2013/coalescenator.git`
-  4. Add a `CMakeLists.txt` file to `coalescenator/src` (e.g. by adapting [this](https://github.com/OSSCB2013/coalescenator/wiki/CMakeLists.txt-example)
+  4. Add a `CMakeLists.txt` file to `coalescenator/src` (e.g. by adapting [this](https://github.com/OSSCB2013/coalescenator/wiki/CMakeLists.txt-example))
   5. `mkdir coalescenator/build && cd coalescenator/build`
   6. `cmake ../src && make`
   
