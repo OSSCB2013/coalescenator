@@ -5,7 +5,7 @@ Sample.hpp - This file is part of the Coalescenator (v1.0.0)
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Kevin Dialdestoro, Jonas Andreas Sibbesen, Lasse Maretty and Paul Jenkins 
+Copyright (c) 2015 Kevin Dialdestoro, Jonas Andreas Sibbesen, Lasse Maretty and Paul Jenkins
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ THE SOFTWARE.
 using namespace std;
 
 typedef vector < vector < vector < uint > > >  SampleContainer;
-typedef unordered_map<vector<uint>, uint, VectorHash<vector<uint> > > FullTypeMap;
+typedef unordered_map<vector<uint>, uint, VectorHash<uint> > FullTypeMap;
 
 class Sample {
 
@@ -51,7 +51,7 @@ class Sample {
     vector < double > viral_loads;
     pair<uint, uint> seq_lens;
 
-  public: 
+  public:
 
     Sample();
     Sample(vector < AncestralTypeMaps >, vector < double >, vector < double >, pair<uint, uint>);
@@ -68,8 +68,8 @@ class CompleteSample : public Sample {
 
   private:
 
-    SampleContainer samples; 
-    
+    SampleContainer samples;
+
     vector <bool> has_missing;
     vector <bool> has_indel;
     vector <bool> has_ambiguous;
@@ -89,16 +89,16 @@ class CompleteSample : public Sample {
 
     // Constructor
     CompleteSample(string, string, string);
-    
+
     void parseBreakpoints(uint);
     void parseBreakpoints(string);
 
     void filterAmbiguousSites();
 
-    // Filter out all missing data from sample 
+    // Filter out all missing data from sample
     void filterMissingData();
 
-    // Filter out all indels 
+    // Filter out all indels
     void filterIndels();
 
     void filterNonBiAllelic();

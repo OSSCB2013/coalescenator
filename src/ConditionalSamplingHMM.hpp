@@ -5,7 +5,7 @@ ConditionalSamplingHMM.hpp - This file is part of the Coalescenator (v1.0.0)
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Kevin Dialdestoro, Jonas Andreas Sibbesen, Lasse Maretty and Paul Jenkins 
+Copyright (c) 2015 Kevin Dialdestoro, Jonas Andreas Sibbesen, Lasse Maretty and Paul Jenkins
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ THE SOFTWARE.
 #include "Utils.hpp"
 #include "TypeContainer.hpp"
 
-using namespace std; 
+using namespace std;
 
 class ConditionalSamplingHMM {
 
@@ -57,12 +57,12 @@ class ConditionalSamplingHMM {
 
 		Eigen::ArrayXXd e_binomial;
 
-		unordered_map < vector<uint>, HMMConstants_transition, VectorHash<vector<uint> > > constant_container_transition;
-		unordered_map < vector<uint>, Eigen::ArrayXXd, VectorHash<vector<uint> > > constant_container_emission;
+		unordered_map < vector<uint>, HMMConstants_transition, VectorHash<uint> > constant_container_transition;
+		unordered_map < vector<uint>, Eigen::ArrayXXd, VectorHash<uint> > constant_container_emission;
 
 		void calcConstantsTransition(uint, uint);
 		void calcConstantsEmission(uint, uint, uint);
-		
+
 		double initialDensity(uint, uint, double);
 		double calculatePartialHaplotypeEmissionProbability(uint, vector<uint> &, vector<int> &, vector<int> &);
 
@@ -70,6 +70,6 @@ class ConditionalSamplingHMM {
 
 		ConditionalSamplingHMM(uint, vector<double> &, vector<double> &, uint);
 		double piSMC(Haplotype &, TypeContainer &, uint);
-};	
+};
 
 #endif

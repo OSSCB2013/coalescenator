@@ -5,7 +5,7 @@ Sample.cpp - This file is part of the Coalescenator (v1.0.0)
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Kevin Dialdestoro, Jonas Andreas Sibbesen, Lasse Maretty and Paul Jenkins 
+Copyright (c) 2015 Kevin Dialdestoro, Jonas Andreas Sibbesen, Lasse Maretty and Paul Jenkins
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -81,7 +81,7 @@ pair<uint, uint> Sample::getSeqLens() {
 CompleteSample::CompleteSample (string fasta_in, string time_in, string viral_in) {
 
 	// Read fasta filenames
-	vector <string> sample_string_vec;	
+	vector <string> sample_string_vec;
 	vector <string> time_string_vec;
     vector <string> viral_string_vec;
 
@@ -96,14 +96,14 @@ CompleteSample::CompleteSample (string fasta_in, string time_in, string viral_in
 
 	vector <string> sorted_sample_vec;
 	sorted_sample_vec.reserve(time_string_vec.size());
-	
+
 	vector <double> sorted_time_vec;
 	sorted_time_vec.reserve(time_string_vec.size());
-	
+
 	vector <double> sorted_viral_vec;
 	sorted_viral_vec.reserve(time_string_vec.size());
 
-	// Sort the sample, time and viral lists according to sample times (bubble sort)   
+	// Sort the sample, time and viral lists according to sample times (bubble sort)
 	for (auto i = 0; i < time_string_vec.size(); i++) {
 
 		if (sorted_time_vec.size() == 0) {
@@ -146,7 +146,7 @@ CompleteSample::CompleteSample (string fasta_in, string time_in, string viral_in
 
 	SampleContainer temp_sample_list;
 	vector < unordered_map <string, uint> > type_count_map;
-	unordered_set<vector<uint>, VectorHash<vector<uint> > > unique_set;
+	unordered_set<vector<uint>, VectorHash<uint> > unique_set;
 
 	string fasta_id_char = ">";
 
@@ -159,13 +159,13 @@ CompleteSample::CompleteSample (string fasta_in, string time_in, string viral_in
 		string line;
   		ifstream file_handle(sorted_sample_vec[i].c_str());
   		assert (file_handle.is_open());
-  		
+
   		FullTypeMap sample_type_maps;
- 		
+
   		cout << "[" << getLocalTime() << "] Parsing: " << sorted_sample_vec[i] << " taken at time " << times[i] << " and with a measured concentration of " << viral_loads[i] << "." << endl;
 
 		while (file_handle.good()) {
-  			
+
   			getline (file_handle, line);
 
   			if ((line.size() > 0) and (fasta_id_char[0] != line[0])) {
@@ -203,7 +203,7 @@ CompleteSample::CompleteSample (string fasta_in, string time_in, string viral_in
   				for (auto j = 0; j < line.size(); j++) {
 
   					if (line.substr(j,1) == "-" and left_missing == true) {
-  						
+
   						has_missing[j] = true;
   						cur_sequence.push_back(5);
   						continue;
@@ -234,15 +234,15 @@ CompleteSample::CompleteSample (string fasta_in, string time_in, string viral_in
 
       						cur_sequence.push_back(type_count_map[j][line.substr(j,1)]);
       					}
-  					}	    					
+  					}
       			}
 
   				for (int j = line.size() - 1; j > -1; j--) {
 
   					if (line.substr(j,1) == "-") {
-  						
+
   						has_missing[j] = true;
-  						has_indel_cur_seq[j] = false; 
+  						has_indel_cur_seq[j] = false;
   						cur_sequence[j] = 5;
   						continue;
   					}
@@ -256,20 +256,20 @@ CompleteSample::CompleteSample (string fasta_in, string time_in, string viral_in
 
       			for (auto j = 0; j < has_indel_cur_seq.size(); j++) {
 
-      				if (has_indel_cur_seq[j]) { 
-      				
+      				if (has_indel_cur_seq[j]) {
+
       					has_indel[j] = true;
       				}
       			}
-      			
+
 				unique_set.insert(cur_sequence);
-      			
+
       			if (!(sample_type_maps.insert({cur_sequence, 1}).second)) {
 
-      				sample_type_maps.at(cur_sequence) += 1;	
-      			} 
+      				sample_type_maps.at(cur_sequence) += 1;
+      			}
   			}
-    	} 
+    	}
 
     	full_type_maps.push_back(sample_type_maps);
     	file_handle.close();
@@ -280,7 +280,7 @@ CompleteSample::CompleteSample (string fasta_in, string time_in, string viral_in
 		if (has_indel[i] == true) {
 
 			poly_count.push_back(type_count_map[i].size() + 1);
-		
+
 		} else {
 
 			poly_count.push_back(type_count_map[i].size());
@@ -300,9 +300,9 @@ void CompleteSample::parseBreakpoints(string input_string) {
 
     assert (loci_coordinates.size() == 0);
     assert (original_loci_coordinates.size() == 0);
- 
+
     vector <pair <uint, uint> > temp_loci_coord;
-   
+
     vector <string> input_check_left_bracket;
 	boost::split(input_check_left_bracket, input_string, boost::is_any_of("["));
 
@@ -318,7 +318,7 @@ void CompleteSample::parseBreakpoints(string input_string) {
 	    assert (loci_string_split.size()== input_check_left_bracket.size() - 1);
 
 	    for (auto it = loci_string_split.begin(); it != loci_string_split.end(); it++) {
-	        
+
 	        assert (it->size() > 0);
 	        assert (it->substr(0,1)  == "[");
 	        assert (it->substr(it->size() - 1,1)  == "]");
@@ -377,7 +377,7 @@ void CompleteSample::parseBreakpoints(string input_string) {
 
     assert (temp_loci_coord.front().first > 0);
 	assert (temp_loci_coord.back().second <= has_missing.size());
-    
+
     loci_coordinates = temp_loci_coord;
     original_loci_coordinates = temp_loci_coord;
 }
@@ -422,7 +422,7 @@ vector <pair <uint, uint> > CompleteSample::getLociCoordinates() {
 	return loci_coordinates;
 }
 
-    	
+
 void CompleteSample::filterAmbiguousSites() {
 
 	uint unique_count = genericFilterFunction(has_ambiguous, 0, 0);
@@ -468,7 +468,7 @@ uint CompleteSample::genericFilterFunction(vector <T> filter_vec, uint min, uint
 	has_indel_temp.reserve(has_indel.size());
 	poly_count_temp.reserve(poly_count.size());
 
-	unordered_set<vector<uint>, VectorHash<vector<uint> > > unique_set;
+	unordered_set<vector<uint>, VectorHash<uint> > unique_set;
 	vector <uint> loci_coordinates_permutation(filter_vec.size(), 0);
 
 	FullTypeMap temp_type_map;
@@ -499,7 +499,7 @@ uint CompleteSample::genericFilterFunction(vector <T> filter_vec, uint min, uint
 						poly_count_temp.push_back(poly_count[k]);
 						cumsum_permutation += 1;
 					}
-				} 
+				}
 
 				if (first_seq) {
 
@@ -524,15 +524,15 @@ uint CompleteSample::genericFilterFunction(vector <T> filter_vec, uint min, uint
 	for (auto it = loci_coordinates.begin(); it != loci_coordinates.end(); it++) {
 
 		if (filter_vec[it->first - 1] >= min and filter_vec[it->first - 1] <= max) {
-		
+
 			it->first = loci_coordinates_permutation[it->first - 1];
-		
+
 		} else {
 
 			it->first = loci_coordinates_permutation[it->first - 1] + 1;
 		}
 
-		it->second = loci_coordinates_permutation[it->second - 1];			
+		it->second = loci_coordinates_permutation[it->second - 1];
 
 		if (it->first > it->second) {
 
@@ -563,9 +563,9 @@ uint CompleteSample::genericFilterFunction(vector <T> filter_vec, uint min, uint
 
 	for (auto rit = erased_loci_coordinates.rbegin(); rit != erased_loci_coordinates.rend(); rit++) {
 
-		cout << "[" << getLocalTime() << "] WARNING: Removed loci " << "(" << rit->first << ", " << rit->second << ") due to a lack of relevant sites." << endl; 
+		cout << "[" << getLocalTime() << "] WARNING: Removed loci " << "(" << rit->first << ", " << rit->second << ") due to a lack of relevant sites." << endl;
 	}
-			 
+
 	if (!erased_loci_coordinates.empty()) {
 
 		cout << "\n";
@@ -655,7 +655,7 @@ pair<Sample, vector <uint> > CompleteSample::getSubSample(pair<uint,uint> first_
 
 				vector <bool> temp_type(it_seq->first.begin() + first_locus_idx.first - 1, it_seq->first.begin() + first_locus_idx.second);
 				temp_type.insert(temp_type.end(), it_seq->first.begin() + second_locus_idx.first - 1, it_seq->first.begin() + second_locus_idx.second);
-				
+
 				if (!(temp_type_map.C.insert({temp_type, it_seq->second}).second)) {
 
 					temp_type_map.C.at(temp_type) += it_seq->second;
@@ -690,9 +690,3 @@ pair<Sample, vector <uint> > CompleteSample::getSubSample(pair<uint,uint> first_
 
 	return pair<Sample, vector<uint> > (subSample, type_counts);
 }
-
-
-
-
-
-

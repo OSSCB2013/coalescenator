@@ -5,7 +5,7 @@ ConditionalSamplingHMM.cpp - This file is part of the Coalescenator (v1.0.0)
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Kevin Dialdestoro, Jonas Andreas Sibbesen, Lasse Maretty and Paul Jenkins 
+Copyright (c) 2015 Kevin Dialdestoro, Jonas Andreas Sibbesen, Lasse Maretty and Paul Jenkins
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ ConditionalSamplingHMM::ConditionalSamplingHMM(uint n_quadrature_points, vector<
 		double quadrature4[] = {0, 0.415774556783, 2.294280360279, 6.289945082937, 1E+300};
 		quadratures = vector<double> (quadrature4, quadrature4 + sizeof(quadrature4)/sizeof(double));
 
-	} else if (n_quadrature_points == 8) { 
+	} else if (n_quadrature_points == 8) {
 
 		double quadrature8[] = {0, 0.193043676560, 1.026664895339, 2.567876744951, 4.900353084526, 8.182153444563, 12.7344180291798, 19.3957278622, 1E+300};
 		quadratures = vector<double> (quadrature8, quadrature8 + sizeof(quadrature8)/sizeof(double));
@@ -69,12 +69,12 @@ ConditionalSamplingHMM::ConditionalSamplingHMM(uint n_quadrature_points, vector<
 	}
 
 	weights = weights_temp;
-	
+
 	e_binomial = Eigen::ArrayXXd::Zero(max_seq_len + 1, max_seq_len + 1);
 
-	for (uint i = 0; i < max_seq_len + 1; i++) { 
+	for (uint i = 0; i < max_seq_len + 1; i++) {
 
-		for (uint j = i; j < max_seq_len + 1; j++) { 
+		for (uint j = i; j < max_seq_len + 1; j++) {
 
 			e_binomial(j,i) = boost::math::binomial_coefficient<double>(j,i);
 			assert (e_binomial(j,i) > 0);
@@ -117,7 +117,7 @@ void ConditionalSamplingHMM::calcConstantsTransition(uint n_all, uint time_idx) 
 
 					hmm_constants_transition.z(i,j) = weights[j] / weights[i] * (weights[i] + (quadratures[i] * exp(-quadratures[i]) - quadratures[i+1] * exp(-quadratures[i+1])));
 
-				} else {	
+				} else {
 
 					double term1 = weights[i] * (weights[i] + (quadratures[i] * exp(-quadratures[i]) - quadratures[i+1] * exp(-quadratures[i+1])));
 					double term2 =  - (quadratures[i] - quadratures[i+1]) * exp(-(quadratures[i] + quadratures[i+1])) - 1/2 * (exp(-2*quadratures[i]) - exp(-2*quadratures[i+1]));
@@ -159,19 +159,19 @@ void ConditionalSamplingHMM::calcConstantsTransition(uint n_all, uint time_idx) 
 
 					hmm_constants_transition.z(i,j) = n_r_constant2 * weights[j] / weights[i] * (weights[i] - n_r_constant3 * (exp(-quadratures[i]/n_r_constant3) - exp(-quadratures[i+1]/n_r_constant3)));
 
-				} else {	
+				} else {
 
 					double term1 = weights[i] * (weights[i] - n_r_constant3 * (exp(-quadratures[i]/n_r_constant3) - exp(-quadratures[i+1]/n_r_constant3)));
 					double term2 = n_r_constant1 / n_r_constant2 * (exp(-quadratures[i]/n_r_constant1) - exp(-quadratures[i+1]/n_r_constant1));
 					double term3 = n_r_constant3 * (exp(-quadratures[i])*exp(-quadratures[i+1]/n_r_constant3) - exp(-quadratures[i+1])*exp(-quadratures[i]/n_r_constant3));
 
-					hmm_constants_transition.z(i,j) = n_r_constant2 / weights[i] * (term1 - term2 - term3);				
+					hmm_constants_transition.z(i,j) = n_r_constant2 / weights[i] * (term1 - term2 - term3);
 				}
 
 				assert (hmm_constants_transition.z(i,j) >= 0);
 				assert (hmm_constants_transition.z(i,j) <= 1);
 			}
-		}	
+		}
 	}
 
 	vector <uint> key_vec(2);
@@ -187,7 +187,7 @@ void ConditionalSamplingHMM::calcConstantsEmission(uint n_all, uint time_idx, ui
 
 	assert(thetas.size() > time_idx);
 
-	for (uint i = 1; i < quadratures.size(); i++) {	
+	for (uint i = 1; i < quadratures.size(); i++) {
 
 		for (uint j = 0; j <= seq_len; j++) {  // Loop over number of differences between query and absorbing haplotype
 
@@ -197,7 +197,7 @@ void ConditionalSamplingHMM::calcConstantsEmission(uint n_all, uint time_idx, ui
 
 				double inner_sum = 0;
 
-				for (uint k = 0; k <= (seq_len - j); k++) { 
+				for (uint k = 0; k <= (seq_len - j); k++) {
 
 		    		double rate = (2*thetas[time_idx]*(k+l)/n_all) +  1;
 		    		assert (rate > 0);
@@ -211,7 +211,7 @@ void ConditionalSamplingHMM::calcConstantsEmission(uint n_all, uint time_idx, ui
 			e_prob /= (weights[i-1] * pow(2,(double) seq_len));
             e_prob = max(e_prob, double_precision);
 			inner_map(i-1,j) = e_prob;
-	
+
 			assert (e_prob >= 0);
 			assert (e_prob <= 1);
 		}
@@ -233,13 +233,13 @@ double ConditionalSamplingHMM::initialDensity(uint n_all, uint n_type, double we
 // Simple handling of emission from unobserved
 double ConditionalSamplingHMM::calculatePartialHaplotypeEmissionProbability(uint discretisation_idx, vector<uint> & key_vec_emission, vector<int> & haplotype_counts, vector<int> & difference_vector) {
 
-	uint num_lineages_complete = 0; 
-	double impute_prob = 0; 
+	uint num_lineages_complete = 0;
+	double impute_prob = 0;
 
 	for (uint i = 0; i < haplotype_counts.size(); i++) {
 
 		if (difference_vector[i] >= 0) { // If complete haplotype
-			
+
 			impute_prob += haplotype_counts[i] * constant_container_emission[key_vec_emission](discretisation_idx, difference_vector[i]);
 			num_lineages_complete += haplotype_counts[i];
 			assert (haplotype_counts[i] > 0);
@@ -255,7 +255,7 @@ double ConditionalSamplingHMM::calculatePartialHaplotypeEmissionProbability(uint
 		impute_prob /= num_lineages_complete;
 
 	}
-	
+
 	assert(impute_prob >= 0);
 	assert(impute_prob <= 1);
 
@@ -268,7 +268,7 @@ double ConditionalSamplingHMM::piSMC(Haplotype & cur_type, TypeContainer & type_
 	uint seq_len_A = type_container.getLocusLengthA();
 	uint seq_len_B = type_container.getLocusLengthB();
 
-	vector<vector<int> > differences = type_container.getDifferences(cur_type); 
+	vector<vector<int> > differences = type_container.getDifferences(cur_type);
 
 	vector <int> haplotype_counts = differences[0];
 	vector <int> difference_A = differences[1];
@@ -293,7 +293,7 @@ double ConditionalSamplingHMM::piSMC(Haplotype & cur_type, TypeContainer & type_
 			return 1/ pow(2,(double) (seq_len_A + seq_len_B));
 
 		}
-		
+
 
 	}
 
@@ -372,8 +372,8 @@ double ConditionalSamplingHMM::piSMC(Haplotype & cur_type, TypeContainer & type_
 	} else {
 
 		// Init base matrix
-		Eigen::ArrayXXd base_matrix = Eigen::ArrayXXd::Zero(weights.size(), difference_A.size()); 
-		Eigen::ArrayXd base_sum_vector = Eigen::ArrayXd::Zero(weights.size()); 	
+		Eigen::ArrayXXd base_matrix = Eigen::ArrayXXd::Zero(weights.size(), difference_A.size());
+		Eigen::ArrayXd base_sum_vector = Eigen::ArrayXd::Zero(weights.size());
 
 		for (uint i = 0; i < weights.size(); i++) {
 
@@ -388,7 +388,7 @@ double ConditionalSamplingHMM::piSMC(Haplotype & cur_type, TypeContainer & type_
 				} else {
 
 					base_matrix(i,idx_A) = constant_container_emission[key_vec_emission_A](i, difference_A[idx_A]) * initialDensity(cur_lineages, haplotype_counts[idx_A], weights[i]);
-					base_sum_vector(i) += base_matrix(i,idx_A);		
+					base_sum_vector(i) += base_matrix(i,idx_A);
 				}
 
 				assert (base_matrix(i,idx_A) >= 0);
@@ -444,10 +444,5 @@ double ConditionalSamplingHMM::piSMC(Haplotype & cur_type, TypeContainer & type_
 	assert (pi_smc >= 0);
 	assert (pi_smc <= 1);
 
-	return (pi_smc); 
+	return (pi_smc);
 }
-
-
-
-
-

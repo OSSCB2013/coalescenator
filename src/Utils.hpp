@@ -5,7 +5,7 @@ Utils.hpp - This file is part of the Coalescenator (v1.0.0)
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Kevin Dialdestoro, Jonas Andreas Sibbesen, Lasse Maretty and Paul Jenkins 
+Copyright (c) 2015 Kevin Dialdestoro, Jonas Andreas Sibbesen, Lasse Maretty and Paul Jenkins
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,10 +38,9 @@ THE SOFTWARE.
 #include <iomanip>
 #include <unordered_map>
 #include <limits>
+#include <functional>
 
 #include "boost/functional/hash.hpp"
-
-
 
 using namespace std;
 
@@ -53,13 +52,37 @@ typedef unsigned int uint;
 typedef unsigned char uchar;
 
 template <typename T>
+size_t hash_value(T val) {
+
+    return std::hash<T>(val);
+}
+
+template <typename T>
 struct VectorHash {
 
-    size_t operator()(T const& c) const {
-        
-        return boost::hash_range(c.begin(), c.end());
+    size_t operator()(const vector<T> & vec) const {
+
+      size_t seed = 0;
+      hash<T> hash_fn;
+
+      // From boost 1.58.0 - functional/hash/hash.hpps: void hash_combine_impl(SizeT& seed, SizeT value)
+      for(auto elem : vec) {
+
+          seed ^= hash_fn(elem) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+      }
+
+      return seed;
     }
 };
+
+// template <typename T>
+// struct VectorHash {
+//
+//     size_t operator()(const vector<T> & c) const {
+//
+//         return boost::hash_range(c.begin(), c.end());
+//     }
+// };
 
 
 inline double logAddition(const double log_summand1, const double log_summand2) {
@@ -72,11 +95,11 @@ inline double logAddition(const double log_summand1, const double log_summand2) 
         double log_sum = log_summand2 + log(1 + exp(log_summand1 - log_summand2));
         assert(std::isfinite(log_sum));
 
-        return log_sum;                
-                    
+        return log_sum;
+
     } else {
 
-        double log_sum = log_summand1 + log(1 + exp(log_summand2 - log_summand1)); 
+        double log_sum = log_summand1 + log(1 + exp(log_summand2 - log_summand1));
         assert(std::isfinite(log_sum));
 
         return log_sum;
@@ -89,8 +112,8 @@ inline double logSubtraction(const double log_summand1, const double log_summand
     assert(std::isfinite(log_summand1));
     assert(std::isfinite(log_summand2));
 
-    double log_sum = log_summand1 + log(1 - exp(log_summand2 - log_summand1)); 
-    
+    double log_sum = log_summand1 + log(1 - exp(log_summand2 - log_summand1));
+
     if (!std::isfinite(log_sum)) {
 
         log_sum = -pow(10,(double)300);
@@ -100,11 +123,11 @@ inline double logSubtraction(const double log_summand1, const double log_summand
 }
 
 
-typedef unordered_map<vector<bool>, uint, VectorHash<vector<bool> > > TypeMap;
+typedef unordered_map<vector<bool>, uint, VectorHash<bool> > TypeMap;
 
 // Container for option variables (all parameters used in the code)
 struct OptionsContainer {
-    
+
     string fasta_list;
     string time_list;
     string viral_list;
@@ -128,24 +151,24 @@ struct OptionsContainer {
     uint qadrature_points;
 
     uint min_dist;
-    uint max_dist;  
+    uint max_dist;
 };
 
 struct ModelParameters {
 
-    double driving_mu; 
+    double driving_mu;
     double driving_lambda;
     double driving_rho;
-    vector<double> target_mu; 
+    vector<double> target_mu;
     vector<double> target_lambda;
     vector<double> target_rho;
-    double tau; 
+    double tau;
 };
 
 struct Haplotype {
 
-    vector<bool> type; 
-    string gamma; 
+    vector<bool> type;
+    string gamma;
 };
 
 struct AncestralTypeMaps {
@@ -158,10 +181,10 @@ struct AncestralTypeMaps {
 // Vector flush capability
 template < typename T >
 std::ostream& operator << (std::ostream& os, typename std::vector<T>& v) {
-    
+
     for (typename vector<T>::const_iterator ii = v.begin(); ii != v.end(); ++ii) {
-        
-		os << scientific << setprecision(6)  << *ii << "  ";	
+
+		os << scientific << setprecision(6)  << *ii << "  ";
 	}
 
     return os;
@@ -170,12 +193,12 @@ std::ostream& operator << (std::ostream& os, typename std::vector<T>& v) {
 // 2D-vector flush capability
 template < typename T >
 std::ostream& operator << (std::ostream& os, typename std::vector<std::vector<T> >& v) {
-    
+
     for (typename vector<vector<T> >:: iterator ii = v.begin(); ii != v.end(); ++ii) {
-		
-        os << *ii << "\n";	
+
+        os << *ii << "\n";
     }
-	
+
     return os;
 }
 
@@ -186,59 +209,59 @@ inline bool double_compare(double a, double b) {
 }
 
 inline string getLocalTime () {
-    
+
     time_t now = time(NULL);
     struct tm * lt;
     lt = localtime (&now);
-    
+
     stringstream output_string;
-        
+
     if (lt->tm_mday < 10) {
-        
+
         output_string << "0" << lt->tm_mday << "/";
-        
+
     } else {
-        
-        output_string << lt->tm_mday << "/";        
+
+        output_string << lt->tm_mday << "/";
     }
-    
+
     if ((1 + lt->tm_mon) < 10) {
-    
+
         output_string << "0" << (1 + lt->tm_mon) << "/" << (1900 + lt->tm_year) << " ";
-        
+
     } else {
-            
-        output_string << (1 + lt->tm_mon) << "/" << (1900 + lt->tm_year) << " ";        
+
+        output_string << (1 + lt->tm_mon) << "/" << (1900 + lt->tm_year) << " ";
     }
 
     if (lt->tm_hour < 10) {
-        
+
         output_string << "0" << lt->tm_hour << ":";
-        
+
     } else {
-        
-        output_string << lt->tm_hour << ":";       
+
+        output_string << lt->tm_hour << ":";
     }
-    
+
     if (lt->tm_min < 10) {
-        
+
         output_string << "0" << lt->tm_min << ":";
-        
+
     } else {
-        
-        output_string << lt->tm_min << ":";      
+
+        output_string << lt->tm_min << ":";
     }
 
     if (lt->tm_sec < 10) {
-        
+
         output_string << "0" << lt->tm_sec;
-        
+
     } else {
-        
-        output_string << lt->tm_sec;      
+
+        output_string << lt->tm_sec;
     }
-    
-    return output_string.str();  
+
+    return output_string.str();
 }
-	
+
 #endif
