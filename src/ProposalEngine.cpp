@@ -299,7 +299,7 @@ double ProposalEngine::sample_backwardMove_forwardTransition(double driving_N, d
 
             event_string = "Coalescence";
 
-        } else if (sampledIndex == totalSequenceLength + 1){ //coalescence of (i,*) with (i,j)
+        } else if (sampledIndex == totalSequenceLength + 1){ //coalescence of (i,j) with (i,*)
 
             assert (Ai > 0);
             assert (Ci > 0);
@@ -311,11 +311,11 @@ double ProposalEngine::sample_backwardMove_forwardTransition(double driving_N, d
             H.removeType(chosenHaplotype2);
             
             // event_constant = n*(Ai + 2*Ci - 1);
-            event_constant = A*(Ai + 2*Ci - 1);
+			event_constant = A*Cij;
 
             event_string = "Coalescence";
 
-        } else if (sampledIndex == totalSequenceLength + 2){ //coalescence of (*,j) with (i,j)
+        } else if (sampledIndex == totalSequenceLength + 2){ //coalescence of (i,j) with (*,j)
 
             assert (Bj > 0);
             assert (Cj > 0);
@@ -327,7 +327,7 @@ double ProposalEngine::sample_backwardMove_forwardTransition(double driving_N, d
             H.removeType(chosenHaplotype2); //remove (*,j)
             
             // event_constant = n*(Bj + 2*Cj - 1);
-            event_constant = B*(Bj + 2*Cj - 1);
+			event_constant = B*Cij;
 
             event_string = "Coalescence";
 
@@ -347,7 +347,7 @@ double ProposalEngine::sample_backwardMove_forwardTransition(double driving_N, d
             assert (Bj > 0);
 
             // event_constant = Ai*Bj/(n+1);
-            event_constant = C*Ai*Bj/((A+1)*(B+1));
+            event_constant = C*Ai*Bj/((A+1.0)*(B+1.0));
 
             event_string = "Recombination";
 
@@ -440,7 +440,7 @@ double ProposalEngine::sample_backwardMove_forwardTransition(double driving_N, d
             assert (Cij > 0);
 
             // event_constant = 2*n*Cij;
-            event_constant = 2*A*B*Cij/(C+1);
+            event_constant = A*B*Cij/(C+1.0);
 
             event_string = "Coalescence";
 
@@ -449,7 +449,7 @@ double ProposalEngine::sample_backwardMove_forwardTransition(double driving_N, d
             assert (Ai > 0 or Ci > 0);
             
             // event_constant = n*(Ai + 2*Ci - 1);
-            event_constant = A*(Ai + 2*Ci - 1);
+            event_constant = A*(Ai + Ci - 1);
 
             event_string = "Coalescence";
 
@@ -539,7 +539,7 @@ double ProposalEngine::sample_backwardMove_forwardTransition(double driving_N, d
             assert (Cij > 0);
 
             // event_constant = 2*n*Cij;
-            event_constant = 2*A*B*Cij/(C+1);
+            event_constant = A*B*Cij/(C+1);
 
             event_string = "Coalescence";
 
@@ -548,7 +548,7 @@ double ProposalEngine::sample_backwardMove_forwardTransition(double driving_N, d
             assert (Bj > 0 or Cj > 0);
 
             // event_constant = n*(Bj + 2*Cj - 1);
-            event_constant = B*(Bj + 2*Cj - 1);
+            event_constant = B*(Bj + Cj - 1);
 
             event_string = "Coalescence";
 
@@ -1031,7 +1031,7 @@ uint ProposalEngine::calculateLikelihood(SamplerOutput<LikelihoodSamplesType> * 
     }
 
     assert(permutation_constant < 0);
-    assert(q_log < 0);
+    //assert(q_log < 0);
 
     Matrix3d<double> likelihood_matrix_before_final_update = likelihood_matrix;
 
