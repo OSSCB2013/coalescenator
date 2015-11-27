@@ -347,7 +347,7 @@ double ProposalEngine::sample_backwardMove_forwardTransition(double driving_N, d
             assert (Bj > 0);
 
             // event_constant = Ai*Bj/(n+1);
-            event_constant = Ai*Bj/((A+1)*(B+1));
+            event_constant = C*Ai*Bj/((A+1)*(B+1));
 
             event_string = "Recombination";
 
